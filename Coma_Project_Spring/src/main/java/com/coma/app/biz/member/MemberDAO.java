@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -389,6 +388,40 @@ public class MemberDAO {
 	}
 }
 
+class MemberSelectRowMapperOne implements RowMapper<MemberDTO> {
+
+	public MemberDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+		MemberDTO memberDTO=new MemberDTO();
+		System.out.print("DB에서 가져온 데이터 {");
+		memberDTO.setMember_id(rs.getString("MEMBER_ID"));
+		System.err.println("member_id = ["+memberDTO.getMember_id()+"]");
+		memberDTO.setMember_password(rs.getString("MEMBER_PASSWORD"));
+		System.err.println("member_password = ["+memberDTO.getMember_password()+"]");
+		memberDTO.setMember_name(rs.getString("MEMBER_NAME"));
+		System.err.println("member_name = ["+memberDTO.getMember_name()+"]");
+		memberDTO.setMember_phone(rs.getString("MEMBER_PHONE"));
+		System.err.println("member_phone = ["+memberDTO.getMember_phone()+"]");
+		memberDTO.setMember_profile(rs.getString("MEMBER_PROFILE"));
+		System.err.println("member_profile = ["+memberDTO.getMember_profile()+"]");
+		memberDTO.setMember_registration_date(rs.getDate("MEMBER_REGISTRATION_DATE"));
+		System.err.println("member_registration_date = ["+memberDTO.getMember_registration_date()+"]");
+		memberDTO.setMember_current_point(rs.getInt("MEMBER_CURRENT_POINT"));
+		System.err.println("member_current_point = ["+memberDTO.getMember_current_point()+"]");
+		memberDTO.setMember_total_point(rs.getInt("MEMBER_TOTAL_POINT"));
+		System.err.println("member_total_point = ["+memberDTO.getMember_total_point()+"]");
+		memberDTO.setMember_crew_num(rs.getInt("MEMBER_CREW_NUM"));
+		System.err.println("member_crew_num = ["+memberDTO.getMember_crew_num()+"]");
+		memberDTO.setMember_crew_join_date(rs.getString("MEMBER_CREW_JOIN_DATE"));
+		System.err.println("member_crew_join_date = ["+memberDTO.getMember_crew_join_date()+"]");
+		memberDTO.setMember_location(rs.getString("MEMBER_LOCATION"));
+		System.err.println("member_location = ["+memberDTO.getMember_location()+"]");
+		memberDTO.setMember_role(rs.getString("MEMBER_ROLE"));
+		System.err.print("member_role = ["+memberDTO.getMember_role()+"]");
+		System.out.println("}");
+		return memberDTO;
+	};
+}
+
 class MemberSearchCrewMemberNameRowMapperAll implements RowMapper<MemberDTO> {
 
 	public MemberDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -450,40 +483,6 @@ class MemberCrewRankRowMapperAll implements RowMapper<MemberDTO> {
 }
 
 class MemberSelectRowMapperAll implements RowMapper<MemberDTO> {
-
-	public MemberDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
-		MemberDTO memberDTO=new MemberDTO();
-		System.out.print("DB에서 가져온 데이터 {");
-		memberDTO.setMember_id(rs.getString("MEMBER_ID"));
-		System.err.println("member_id = ["+memberDTO.getMember_id()+"]");
-		memberDTO.setMember_password(rs.getString("MEMBER_PASSWORD"));
-		System.err.println("member_password = ["+memberDTO.getMember_password()+"]");
-		memberDTO.setMember_name(rs.getString("MEMBER_NAME"));
-		System.err.println("member_name = ["+memberDTO.getMember_name()+"]");
-		memberDTO.setMember_phone(rs.getString("MEMBER_PHONE"));
-		System.err.println("member_phone = ["+memberDTO.getMember_phone()+"]");
-		memberDTO.setMember_profile(rs.getString("MEMBER_PROFILE"));
-		System.err.println("member_profile = ["+memberDTO.getMember_profile()+"]");
-		memberDTO.setMember_registration_date(rs.getDate("MEMBER_REGISTRATION_DATE"));
-		System.err.println("member_registration_date = ["+memberDTO.getMember_registration_date()+"]");
-		memberDTO.setMember_current_point(rs.getInt("MEMBER_CURRENT_POINT"));
-		System.err.println("member_current_point = ["+memberDTO.getMember_current_point()+"]");
-		memberDTO.setMember_total_point(rs.getInt("MEMBER_TOTAL_POINT"));
-		System.err.println("member_total_point = ["+memberDTO.getMember_total_point()+"]");
-		memberDTO.setMember_crew_num(rs.getInt("MEMBER_CREW_NUM"));
-		System.err.println("member_crew_num = ["+memberDTO.getMember_crew_num()+"]");
-		memberDTO.setMember_crew_join_date(rs.getString("MEMBER_CREW_JOIN_DATE"));
-		System.err.println("member_crew_join_date = ["+memberDTO.getMember_crew_join_date()+"]");
-		memberDTO.setMember_location(rs.getString("MEMBER_LOCATION"));
-		System.err.println("member_location = ["+memberDTO.getMember_location()+"]");
-		memberDTO.setMember_role(rs.getString("MEMBER_ROLE"));
-		System.err.print("member_role = ["+memberDTO.getMember_role()+"]");
-		System.out.println("}");
-		return memberDTO;
-	};
-}
-
-class MemberSelectRowMapperOne implements RowMapper<MemberDTO> {
 
 	public MemberDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
 		MemberDTO memberDTO=new MemberDTO();

@@ -26,6 +26,8 @@ MemberDTO {
 	private String member_crew_name;		//사용자가 속한 크루 이름
 	private String member_crew_profile;	//사용자가 속한 크루 이미지 url
 	private String member_crew_leader;	//사용자가 속한 크루장 pk
+	private String VIEW_AUTO_LOGIN; // 자동로그인 체크
+	private int VIEW_USE_POINT;
 
 	public String getMember_id() {
 		return member_id;
@@ -179,6 +181,22 @@ MemberDTO {
 		this.member_crew_leader = member_crew_leader;
 	}
 
+	public String getVIEW_AUTO_LOGIN() {
+		return VIEW_AUTO_LOGIN;
+	}
+
+	public void setVIEW_AUTO_LOGIN(String VIEW_AUTO_LOGIN) {
+		this.VIEW_AUTO_LOGIN = VIEW_AUTO_LOGIN;
+	}
+
+	public int getVIEW_USE_POINT() {
+		return VIEW_USE_POINT;
+	}
+
+	public void setVIEW_USE_POINT(int VIEW_USE_POINT) {
+		this.VIEW_USE_POINT = VIEW_USE_POINT;
+	}
+
 	@Override
 	public String toString() {
 		return "MemberDTO{" +
@@ -201,6 +219,8 @@ MemberDTO {
 				", member_crew_name='" + member_crew_name + '\'' +
 				", member_crew_profile='" + member_crew_profile + '\'' +
 				", member_crew_leader='" + member_crew_leader + '\'' +
+				", VIEW_AUTO_LOGIN='" + VIEW_AUTO_LOGIN + '\'' +
+				", VIEW_USE_POINT=" + VIEW_USE_POINT +
 				'}';
 	}
 }

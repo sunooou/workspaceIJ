@@ -147,18 +147,6 @@ public class GymDAO {
 	}
 }
 
-class GymCountRowMapper implements RowMapper<GymDTO> {
-
-	public GymDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
-		GymDTO gymDTO=new GymDTO();
-		System.out.print("GymCountRowMapper DB에서 가져온 데이터 {");
-		gymDTO.setGym_total(rs.getInt("GYM_TOTAL"));
-		System.err.print("gym_total = ["+gymDTO.getGym_total()+"]");
-		System.out.println("}");
-		return gymDTO;
-	};
-}
-
 class GymSelectRowMapperOneAll implements RowMapper<GymDTO> {
 
 	public GymDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -182,6 +170,18 @@ class GymSelectRowMapperOneAll implements RowMapper<GymDTO> {
 		System.err.println("gym_battle_num = ["+gymDTO.getGym_battle_num()+"]");
 		gymDTO.setGym_battle_game_date(rs.getString("GYM_BATTLE_GAME_DATE"));
 		System.err.print("gym_battle_game_date = ["+gymDTO.getGym_battle_game_date()+"]");
+		System.out.println("}");
+		return gymDTO;
+	};
+}
+
+class GymCountRowMapper implements RowMapper<GymDTO> {
+
+	public GymDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+		GymDTO gymDTO=new GymDTO();
+		System.out.print("GymCountRowMapper DB에서 가져온 데이터 {");
+		gymDTO.setGym_total(rs.getInt("GYM_TOTAL"));
+		System.err.print("gym_total = ["+gymDTO.getGym_total()+"]");
 		System.out.println("}");
 		return gymDTO;
 	};
