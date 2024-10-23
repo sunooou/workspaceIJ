@@ -79,7 +79,7 @@ public class GymDAO {
 
 	public boolean insert(GymDTO gymDTO) {
 		System.out.println("com.coma.app.biz.gym.insert 시작");
-
+		//암벽장 등록 GYM_NAME, GYM_PROFILE, GYM_DESCRIPTION, GYM_LOCATION
 		int result=jdbcTemplate.update(INSERT,gymDTO.getGym_name(),gymDTO.getGym_profile(),gymDTO.getGym_description(),gymDTO.getGym_location());
 		if(result<=0) {
 			System.out.println("com.coma.app.biz.gym.insert SQL문 실패");
@@ -91,7 +91,7 @@ public class GymDAO {
 
 	public boolean update(GymDTO gymDTO) {
 		System.out.println("com.coma.app.biz.gym.update 시작");
-
+		//예약가능 개수 업데이트 GYM_RESERVATION_CNT, GYM_NUM
 		int result=jdbcTemplate.update(UPDATE_RESERVATION_CNT, gymDTO.getGym_reservation_cnt(),gymDTO.getGym_num());
 		if(result<=0) {
 			System.out.println("com.coma.app.biz.gym.update SQL문 실패");
@@ -108,40 +108,40 @@ public class GymDAO {
 
 	public GymDTO selectOne(GymDTO gymDTO){
 		System.out.println("com.coma.app.biz.gym.selectOne 시작");
-
-		String sql="";
-		Object[] args= {gymDTO.getGym_num()};
 		GymDTO data=null;
-
-		if(gymDTO.getGym_condition().equals("GYM_ONE")) {
-			System.out.println("암벽장 PK로 검색 GYM_NUM");
-			sql=ONE;
+		Object[] args= {gymDTO.getGym_num()};
+		try {
+			//암벽장 PK로 검색 GYM_NUM
+			data= jdbcTemplate.queryForObject(ONE, new GymSelectRowMapperOneAll());
 		}
-		else if (gymDTO.getGym_condition().equals("GYM_ONE_COUNT")) {
-			System.out.println("암벽장 총 개수 GYM_ONE_COUNT");
-			sql=ONE_COUNT;
+		catch (Exception e) {
+			System.out.println("com.coma.app.biz.gym.selectOne SQL문 실패");
 		}
-		else {
-			System.out.println("컨디션 입력 오류");
-		}
-
-		if(sql.equals(ONE_COUNT)) {
-			System.out.println("ONE_COUNT 쿼리문 성공");
-			data= jdbcTemplate.queryForObject(sql, new GymCountRowMapper());
-		}
-		else if(sql.equals(ONE)) {
-			System.out.println("ONE 쿼리문 성공");
-			data= jdbcTemplate.queryForObject(sql, args, new GymSelectRowMapper());
-		}
+		System.out.println("com.coma.app.biz.gym.selectOne 성공");
 		return data;
 	}
+
+	public GymDTO selectOneCount(GymDTO gymDTO){
+		System.out.println("com.coma.app.biz.gym.selectOneCount 시작");
+		GymDTO data=null;
+		try {
+			//암벽장 총 개수
+			data= jdbcTemplate.queryForObject(ONE_COUNT, new GymCountRowMapper());
+		}
+		catch (Exception e) {
+			System.out.println("com.coma.app.biz.gym.selectOneCount SQL문 실패");
+		}
+		System.out.println("com.coma.app.biz.gym.selectOneCount 성공");
+		return data;
+	}
+
 
 	public List<GymDTO> selectAll(GymDTO gymDTO){
 		System.out.println("com.coma.app.biz.gym.selectAll 시작");
 
 		Object[] args= {gymDTO.getGym_min_num(),6};
-
-		List<GymDTO> datas=jdbcTemplate.query(ALL,args,new GymSelectRowMapper());
+		//(페이지 네이션) 암벽장 전체출력
+		List<GymDTO> datas=jdbcTemplate.query(ALL,args,new GymSelectRowMapperOneAll());
 		System.out.println("com.coma.app.biz.gym.selectAll 성공");
 		return datas;
 	}
@@ -159,7 +159,7 @@ class GymCountRowMapper implements RowMapper<GymDTO> {
 	};
 }
 
-class GymSelectRowMapper implements RowMapper<GymDTO> {
+class GymSelectRowMapperOneAll implements RowMapper<GymDTO> {
 
 	public GymDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
 		GymDTO gymDTO=new GymDTO();
@@ -180,8 +180,8 @@ class GymSelectRowMapper implements RowMapper<GymDTO> {
 		System.err.println("gym_price = ["+gymDTO.getGym_price()+"]");
 		gymDTO.setGym_battle_num(rs.getInt("GYM_BATTLE_NUM"));
 		System.err.println("gym_battle_num = ["+gymDTO.getGym_battle_num()+"]");
-		gymDTO.setGym_battle_game_date(rs.getString("GYM_BATTLE_DATE"));
-		System.err.print("gym_battle_game = ["+gymDTO.getGym_battle_game_date()+"]");
+		gymDTO.setGym_battle_game_date(rs.getString("GYM_BATTLE_GAME_DATE"));
+		System.err.print("gym_battle_game_date = ["+gymDTO.getGym_battle_game_date()+"]");
 		System.out.println("}");
 		return gymDTO;
 	};

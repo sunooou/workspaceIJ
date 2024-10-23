@@ -114,43 +114,102 @@ public class ReservationDAO {
 	public ReservationDTO selectOne(ReservationDTO reservationDTO){
 		System.out.println("com.coma.app.biz.reservation.selectOne 시작");
 
-		Object[] args; // 쿼리문에 설정할 데이터 배열
-		String sql; // sql 쿼리문
+		ReservationDTO data=null;
+		Object[] args={reservationDTO.getReservation_num()};
 
-		//PK로 예약 정보 찾기 RESERVATION_NUM
-		if(reservationDTO.getReservation_condition().equals("RESERVATION_ONE")) {
-			sql=ONE;
-			args=new Object[]{reservationDTO.getReservation_gym_num()};
+		try {
+			//PK로 예약 정보 찾기 RESERVATION_NUM
+			data=jdbcTemplate.queryForObject(ONE, args, new ReservationSelectRowMapperOne());
 		}
-		//해당 암벽장 예약 가능 개수 RESERVATION_GYM_NUM
-		else if(reservationDTO.getReservation_condition().equals("RESERVATION_ONE_COUNT")) {
-			sql=ONE_COUNT;
-			args=new Object[]{reservationDTO.getReservation_gym_num(), reservationDTO.getReservation_date()};
-		}
-		//사용자 아이디로 해당 암벽장에 예약한 날짜 중복 확인 RESERVATION_MEMBER_ID, RESERVATION_GYM_NUM, RESERVATION_DATE
-		else if(reservationDTO.getReservation_condition().equals("RESERVATION_ONE_SEARCH")) {
-			sql=ONE_RESERVATION;
-			args=new Object[]{reservationDTO.getReservation_member_id(), reservationDTO.getReservation_gym_num(), reservationDTO.getReservation_date()};
-		}
-		else {
-			System.out.println("com.coma.app.biz.reservation.selectOne SQL문 실패");
-			return null;
+		catch (Exception e) {
+			System.out.println("com.coma.app.biz.reservation.selectOne 실패");
 		}
 		System.out.println("com.coma.app.biz.reservation.selectOne 성공");
-		return jdbcTemplate.queryForObject(sql, args, new ReservationRowMapper());
+		return data;
+	}
+
+	public ReservationDTO selectOneCount(ReservationDTO reservationDTO){
+		System.out.println("com.coma.app.biz.reservation.selectOneCount 시작");
+
+		ReservationDTO data=null;
+		Object[] args={reservationDTO.getReservation_gym_num(), reservationDTO.getReservation_date()};
+		try {
+			//해당 암벽장 예약 가능 개수 RESERVATION_GYM_NUM
+			data= jdbcTemplate.queryForObject(ONE_COUNT, args, new ReservationCountRowMapperOne());
+		}
+		catch (Exception e) {
+			System.out.println("com.coma.app.biz.reservation.selectOneCount SQL문 실패");
+		}
+		System.out.println("com.coma.app.biz.reservation.selectOneCount 성공");
+		return data;
+	}
+
+	public ReservationDTO selectOneReservation(ReservationDTO reservationDTO){
+		System.out.println("com.coma.app.biz.reservation.selectOneReservation 시작");
+
+		ReservationDTO data=null;
+		Object[] args={reservationDTO.getReservation_member_id(), reservationDTO.getReservation_gym_num(), reservationDTO.getReservation_date()};
+		try {
+			//사용자 아이디로 해당 암벽장에 예약한 날짜 중복 확인 RESERVATION_MEMBER_ID, RESERVATION_GYM_NUM, RESERVATION_DATE
+			data= jdbcTemplate.queryForObject(ONE_RESERVATION, args, new ReservationSelectRowMapperOne());
+		}
+		catch (Exception e) {
+			System.out.println("com.coma.app.biz.reservation.selectOneReservation SQL문 실패");
+		}
+		System.out.println("com.coma.app.biz.reservation.selectOneReservation 성공");
+		return data;
 	}
 
 	public List<ReservationDTO> selectAll(ReservationDTO reservationDTO){
 		System.out.println("com.coma.app.biz.reservation.selectAll 시작");
 
+		List<ReservationDTO> datas=null;
 		Object[] args={reservationDTO.getReservation_member_id()};
-		//사용자 아이디로 예약한 내역 전부 출력 RESERVATION_MEMBER_ID
+		try {
+			//사용자 아이디로 예약한 내역 전부 출력 RESERVATION_MEMBER_ID
+			datas= jdbcTemplate.query(ALL, args, new ReservationRowMapperAll());
+		}
+		catch (Exception e) {
+			System.out.println("com.coma.app.biz.reservation.selectAll SQL문 실패");
+		}
 		System.out.println("com.coma.app.biz.reservation.selectAll 성공");
-		return jdbcTemplate.query(ALL, args, new ReservationRowMapper());
+		return datas;
 	}
 }
 
-class ReservationRowMapper implements RowMapper<ReservationDTO> {
+class ReservationCountRowMapperOne implements RowMapper<ReservationDTO> {
+
+	public ReservationDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+		ReservationDTO reservationDTO=new ReservationDTO();
+		System.out.print("DB에서 가져온 데이터 {");
+		reservationDTO.setReservation_total(rs.getInt("RESERVATION_TOTAL"));
+		System.err.print("reservation_total = ["+reservationDTO.getReservation_total()+"]");
+		System.out.println("}");
+		return reservationDTO;
+	};
+}
+
+class ReservationSelectRowMapperOne implements RowMapper<ReservationDTO> {
+
+	public ReservationDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+		ReservationDTO reservationDTO=new ReservationDTO();
+		System.out.print("DB에서 가져온 데이터 {");
+		reservationDTO.setReservation_num(rs.getInt("RESERVATION_NUM"));
+		System.err.println("reservation_num = ["+reservationDTO.getReservation_num()+"]");
+		reservationDTO.setReservation_date(rs.getString("RESERVATION_DATE"));
+		System.err.println("reservation_date = ["+reservationDTO.getReservation_date()+"]");
+		reservationDTO.setReservation_gym_num(rs.getInt("RESERVATION_GYM_NUM"));
+		System.err.println("reservation_gym_num = ["+reservationDTO.getReservation_gym_num()+"]");
+		reservationDTO.setReservation_member_id(rs.getString("RESERVATION_MEMBER_ID"));
+		System.err.println("reservation_member_id = ["+reservationDTO.getReservation_member_id()+"]");
+		reservationDTO.setReservation_price(rs.getInt("RESERVATION_PRICE"));
+		System.err.print("reservation_price = ["+reservationDTO.getReservation_price()+"]");
+		System.out.println("}");
+		return reservationDTO;
+	};
+}
+
+class ReservationRowMapperAll implements RowMapper<ReservationDTO> {
 
 	public ReservationDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
 		ReservationDTO reservationDTO=new ReservationDTO();
@@ -167,8 +226,6 @@ class ReservationRowMapper implements RowMapper<ReservationDTO> {
 		System.err.println("reservation_price = ["+reservationDTO.getReservation_price()+"]");
 		reservationDTO.setReservation_gym_name(rs.getString("GYM_NAME"));
 		System.err.println("reservation_name = ["+reservationDTO.getReservation_gym_name()+"]");
-		reservationDTO.setReservation_total(rs.getInt("RESERVATION_TOTAL"));
-		System.err.print("reservation_total = ["+reservationDTO.getReservation_total()+"]");
 		System.out.println("}");
 		return reservationDTO;
 	};

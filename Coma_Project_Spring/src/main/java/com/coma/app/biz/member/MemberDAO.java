@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -17,31 +18,31 @@ public class MemberDAO {
 			+ "FROM MEMBER\r\n"
 			+ "WHERE MEMBER_ID = ?";
 
-	//아이디 비밀번호로 찾기
-	private final String SEARCH_ID_PASSWORD="SELECT MEMBER_ID,MEMBER_PASSWORD,MEMBER_NAME,MEMBER_PHONE,MEMBER_PROFILE,MEMBER_REGISTRATION_DATE,MEMBER_CURRENT_POINT,MEMBER_TOTAL_POINT,MEMBER_CREW_NUM,MEMBER_CREW_JOIN_DATE,MEMBER_LOCATION,MEMBER_ROLE\r\n"
+	//아이디 비밀번호로 찾기 MEMBER_ID, MEMBER_PASSWORD
+	private final String SEARCH_ID_PASSWORD = "SELECT MEMBER_ID,MEMBER_PASSWORD,MEMBER_NAME,MEMBER_PHONE,MEMBER_PROFILE,MEMBER_REGISTRATION_DATE,MEMBER_CURRENT_POINT,MEMBER_TOTAL_POINT,MEMBER_CREW_NUM,MEMBER_CREW_JOIN_DATE,MEMBER_LOCATION,MEMBER_ROLE\r\n"
 			+ "FROM MEMBER\r\n"
 			+ "WHERE MEMBER_ID = ? AND MEMBER_PASSWORD= ? ";
 
-	//크루에 속한 회원목록 조회
-	private final String SEARCH_CREW="SELECT MEMBER_ID,MEMBER_PASSWORD,MEMBER_NAME,MEMBER_PHONE,MEMBER_PROFILE,MEMBER_REGISTRATION_DATE,MEMBER_CURRENT_POINT,MEMBER_TOTAL_POINT,MEMBER_CREW_NUM,MEMBER_CREW_JOIN_DATE,MEMBER_LOCATION,MEMBER_ROLE\r\n"
+	//크루에 속한 회원목록 조회 MEMBER_CREW_NUM
+	private final String SEARCH_CREW = "SELECT MEMBER_ID,MEMBER_PASSWORD,MEMBER_NAME,MEMBER_PHONE,MEMBER_PROFILE,MEMBER_REGISTRATION_DATE,MEMBER_CURRENT_POINT,MEMBER_TOTAL_POINT,MEMBER_CREW_NUM,MEMBER_CREW_JOIN_DATE,MEMBER_LOCATION,MEMBER_ROLE\r\n"
 			+ "FROM MEMBER\r\n"
 			+ "WHERE MEMBER_CREW_NUM = ?";
 
 	//랭킹높은순으로 정렬 관리자 FIXME 관리자 권한이 아닌사람들만
-	private final String SEARCH_RANK="SELECT MEMBER_ID,MEMBER_PASSWORD,MEMBER_NAME,MEMBER_PHONE,MEMBER_PROFILE,MEMBER_REGISTRATION_DATE,MEMBER_CURRENT_POINT,MEMBER_TOTAL_POINT,MEMBER_CREW_NUM,MEMBER_CREW_JOIN_DATE,MEMBER_LOCATION,MEMBER_ROLE\r\n"
+	private final String SEARCH_RANK = "SELECT MEMBER_ID,MEMBER_PASSWORD,MEMBER_NAME,MEMBER_PHONE,MEMBER_PROFILE,MEMBER_REGISTRATION_DATE,MEMBER_CURRENT_POINT,MEMBER_TOTAL_POINT,MEMBER_CREW_NUM,MEMBER_CREW_JOIN_DATE,MEMBER_LOCATION,MEMBER_ROLE\r\n"
 			+ "FROM MEMBER\r\n"
 			+ "WHERE MEMBER_ROLE='F'\r\n"
 			+ "ORDER BY MEMBER_TOTAL_POINT DESC";
 
 	//회원가입
-	private final String INSERT="INSERT INTO MEMBER(MEMBER_ID,MEMBER_NAME,MEMBER_PASSWORD,MEMBER_PHONE,MEMBER_LOCATION) \r\n"
+	private final String INSERT = "INSERT INTO MEMBER(MEMBER_ID,MEMBER_NAME,MEMBER_PASSWORD,MEMBER_PHONE,MEMBER_LOCATION) \r\n"
 			+ "VALUES(?,?,?,?,?)";
 
 	//회원탈퇴
-	private final String DELETE="DELETE FROM MEMBER WHERE MEMBER_ID = ?";
+	private final String DELETE = "DELETE FROM MEMBER WHERE MEMBER_ID = ?";
 
 	//회원정보 업데이트 MEMBER_PASSWORD, MEMBER_PROFILE, MEMBER_PHONE, MEMBER_LOCATION, MEMBER_ID
-	private final String UPDATE_ALL="UPDATE MEMBER\r\n"
+	private final String UPDATE_ALL = "UPDATE MEMBER\r\n"
 			+ "SET\r\n"
 			+ "	MEMBER_PASSWORD = ?,\r\n"
 			+ "	MEMBER_PROFILE = ?,\r\n"
@@ -50,25 +51,25 @@ public class MemberDAO {
 			+ "WHERE MEMBER_ID = ?";
 
 	//회원정보 업데이트 (profile X) MEMBER_PASSWORD, MEMBER_PHONE, MEMBER_LOCATION, MEMBER_ID
-	private final String UPDATE_WITHOUT_PROFILE="UPDATE MEMBER\r\n"
+	private final String UPDATE_WITHOUT_PROFILE = "UPDATE MEMBER\r\n"
 			+ "SET\r\n"
 			+ "	MEMBER_PASSWORD = ?,\r\n"
 			+ "	MEMBER_PHONE = ?,\r\n"
 			+ "	MEMBER_LOCATION = ?\r\n"
 			+ "WHERE MEMBER_ID = ?";
 
-	//크루가입 (크루가입시 가입날짜입력때문에 분리)
+	//크루가입 (크루가입시 가입날짜입력때문에 분리) MEMBER_ID
 	private final String UPDATE_CREW = "UPDATE MEMBER\r\n" //FIXME 관리자 권한이 아닌 사람들만
 			+ "SET\r\n"
 			+ "	MEMBER_CREW_NUM = 1,\r\n"
 			+ "	MEMBER_CREW_JOIN_DATE = SYSDATE()\r\n"
 			+ "WHERE MEMBER_ID = ?";
 
-	//관리자 권한 변경 ROLE, ID
-	private final String UPDATE_ADMIN ="UPDATE MEMBER SET MEMBER_ROLE = '?' WHERE MEMBER_ID = '?'";
+	//관리자 권한 변경 MEMBER_ROLE, MEMBER_ID
+	private final String UPDATE_ADMIN = "UPDATE MEMBER SET MEMBER_ROLE = '?' WHERE MEMBER_ID = '?'";
 
 	//관리자가 아닌 신규회원 출력 (기간 7일)
-	private final String ALL_NEW ="SELECT MEMBER_ID,MEMBER_PASSWORD,MEMBER_NAME,MEMBER_PHONE,MEMBER_PROFILE,MEMBER_REGISTRATION_DATE,MEMBER_CURRENT_POINT,MEMBER_TOTAL_POINT,MEMBER_CREW_NUM,MEMBER_CREW_JOIN_DATE,MEMBER_LOCATION,MEMBER_ROLE\r\n"
+	private final String ALL_NEW = "SELECT MEMBER_ID,MEMBER_PASSWORD,MEMBER_NAME,MEMBER_PHONE,MEMBER_PROFILE,MEMBER_REGISTRATION_DATE,MEMBER_CURRENT_POINT,MEMBER_TOTAL_POINT,MEMBER_CREW_NUM,MEMBER_CREW_JOIN_DATE,MEMBER_LOCATION,MEMBER_ROLE\r\n"
 			+ "FROM MEMBER\r\n"
 			+ "WHERE MEMBER_REGISTRATION_DATE >= DATE_ADD(SYSDATE(), INTERVAL - (INTERVAL '7' DAY) * 86400 SECOND) AND ROLE='F'";
 
@@ -160,8 +161,8 @@ public class MemberDAO {
 		System.out.println("com.coma.app.biz.member.insert 시작");
 
 		//회원가입 MEMBER_ID ,MEMBER_NAME, MEMBER_PASSWORD, MEMBER_PHONE, MEMBER_LOCATION
-		int result=jdbcTemplate.update(INSERT,memberDTO.getMember_id(),memberDTO.getMember_name(),memberDTO.getMember_password(),memberDTO.getMember_phone(),memberDTO.getMember_location());
-		if(result<=0) {
+		int result = jdbcTemplate.update(INSERT, memberDTO.getMember_id(), memberDTO.getMember_name(), memberDTO.getMember_password(), memberDTO.getMember_phone(), memberDTO.getMember_location());
+		if (result <= 0) {
 			System.out.println("com.coma.app.biz.member.insert SQL문 실패");
 			return false;
 		}
@@ -169,41 +170,63 @@ public class MemberDAO {
 		return true;
 	}
 
-	public boolean update(MemberDTO memberDTO) {
-		System.out.println("com.coma.app.biz.member.update 시작");
-
-		int result;
-
+	public boolean updateAll(MemberDTO memberDTO) {
+		System.out.println("com.coma.app.biz.member.updateAll 시작");
 		//회원정보 업데이트 MEMBER_PASSWORD, MEMBER_PROFILE, MEMBER_PHONE, MEMBER_LOCATION, MEMBER_ID
-		if(memberDTO.getMember_condition().equals("MEMBER_UPDATE_ALL")) {
-			result=jdbcTemplate.update(UPDATE_ALL,memberDTO.getMember_password(),memberDTO.getMember_profile(),memberDTO.getMember_phone(),memberDTO.getMember_location(),memberDTO.getMember_id());
-		}
-		//회원정보 업데이트 (profile X) MEMBER_PASSWORD, MEMBER_PHONE, MEMBER_LOCATION, MEMBER_ID
-		else if(memberDTO.getMember_condition().equals("MEMBER_UPDATE_WITHOUT_PROFILE")) {
-			result=jdbcTemplate.update(UPDATE_WITHOUT_PROFILE,memberDTO.getMember_password(),memberDTO.getMember_phone(),memberDTO.getMember_location(),memberDTO.getMember_id());
-		}
-		//크루가입 MEMBER_CREW_NUM, MEMBER_ID
-		else if(memberDTO.getMember_condition().equals("MEMBER_UPDATE_CREW")) {
-			result=jdbcTemplate.update(UPDATE_CREW,memberDTO.getMember_crew_num(),memberDTO.getMember_id());
-		}
-		//관리자 권한 변경 MEMBER_ROLE, MEMBER_ID
-		else if(memberDTO.getMember_condition().equals("MEMBER_UPDATE_ADMIN")) {
-			result=jdbcTemplate.update(UPDATE_ADMIN,memberDTO.getMember_role(),memberDTO.getMember_id());
-		}
-		//사용자 포인트 업데이트 MEMBER_CURRENT_POINT, MEMBER_ID
-		else if(memberDTO.getMember_condition().equals("MEMBER_UPDATE_CURRENT_POINT")) {
-			result=jdbcTemplate.update(UPDATE_CURRENT_POINT,memberDTO.getMember_current_point(),memberDTO.getMember_id());
-		}
-		else {
-			System.err.println("컨디션 입력 오류");
+		int result = jdbcTemplate.update(UPDATE_ALL, memberDTO.getMember_password(), memberDTO.getMember_profile(), memberDTO.getMember_phone(), memberDTO.getMember_location(), memberDTO.getMember_id());
+		if (result <= 0) {
+			System.out.println("com.coma.app.biz.member.updateAll SQL문 실패");
 			return false;
 		}
+		System.out.println("com.coma.app.biz.member.updateAll 성공");
+		return true;
+	}
 
-		if(result<=0) {
-			System.out.println("com.coma.app.biz.member.update SQL문 실패");
+	public boolean updateWithoutProfile(MemberDTO memberDTO) {
+		System.out.println("com.coma.app.biz.member.updateWithoutProfile 시작");
+		//회원정보 업데이트 (profile X) MEMBER_PASSWORD, MEMBER_PHONE, MEMBER_LOCATION, MEMBER_ID
+		int result = jdbcTemplate.update(UPDATE_WITHOUT_PROFILE, memberDTO.getMember_password(), memberDTO.getMember_phone(), memberDTO.getMember_location(), memberDTO.getMember_id());
+		if (result <= 0) {
+			System.out.println("com.coma.app.biz.member.updateWithoutProfile SQL문 실패");
 			return false;
 		}
-		System.out.println("com.coma.app.biz.member.update 성공");
+		System.out.println("com.coma.app.biz.member.updateWithoutProfile 성공");
+		return true;
+	}
+
+	public boolean updateCrew(MemberDTO memberDTO) {
+		System.out.println("com.coma.app.biz.member.updateCrew 시작");
+		//크루가입 (크루가입시 가입날짜입력때문에 분리) MEMBER_ID
+		int result = jdbcTemplate.update(UPDATE_CREW, memberDTO.getMember_crew_num(), memberDTO.getMember_id());
+		if (result <= 0) {
+			System.out.println("com.coma.app.biz.member.updateCrew SQL문 실패");
+			return false;
+		}
+		System.out.println("com.coma.app.biz.member.updateCrew 성공");
+		return true;
+	}
+
+	public boolean updateAdmin(MemberDTO memberDTO) {
+		System.out.println("com.coma.app.biz.member.updateAdmin 시작");
+		//관리자 권한 변경 MEMBER_ROLE, MEMBER_ID
+		int result = jdbcTemplate.update(UPDATE_ADMIN, memberDTO.getMember_role(), memberDTO.getMember_id());
+		if (result <= 0) {
+			System.out.println("com.coma.app.biz.member.updateAdmin SQL문 실패");
+			return false;
+		}
+		System.out.println("com.coma.app.biz.member.updateAdmin 성공");
+		return true;
+	}
+
+	public boolean updateCurrentPoint(MemberDTO memberDTO) {
+		System.out.println("com.coma.app.biz.member.updateCurrentPoint 시작");
+		//사용자 포인트 업데이트 MEMBER_CURRENT_POINT, MEMBER_ID
+		int result = jdbcTemplate.update(UPDATE_CURRENT_POINT, memberDTO.getMember_current_point(), memberDTO.getMember_id());
+		if (result <= 0) {
+			System.out.println("com.coma.app.biz.member.updateCurrentPoint SQL문 실패");
+			return false;
+		}
+		System.out.println("com.coma.app.biz.member.updateCurrentPoint 성공");
 		return true;
 	}
 
@@ -211,8 +234,8 @@ public class MemberDAO {
 		System.out.println("com.coma.app.biz.member.delete 시작");
 
 		//회원탈퇴 MEMBER_ID
-		int result=jdbcTemplate.update(DELETE,memberDTO.getMember_id());
-		if(result<=0) {
+		int result = jdbcTemplate.update(DELETE, memberDTO.getMember_id());
+		if (result <= 0) {
 			System.out.println("com.coma.app.biz.member.delete SQL문 실패");
 			return false;
 		}
@@ -220,114 +243,213 @@ public class MemberDAO {
 		return true;
 	}
 
-	public MemberDTO selectOne(MemberDTO memberDTO) {
-		System.out.println("com.coma.app.biz.member.selectOne 시작");
+	public MemberDTO selectOneSearchId(MemberDTO memberDTO) {
+		System.out.println("com.coma.app.biz.member.selectOneSearchId 시작");
 
-		Object[] args={};
-		String sql="";
-		MemberDTO data=null;
-
-		//아이디로 검색 MEMBER_ID
-		if(memberDTO.getMember_condition().equals("MEMBER_SEARCH_ID")) {
-			sql=SEARCH_ID;
-			args= new Object[]{memberDTO.getMember_id()};
+		MemberDTO data = null;
+		Object[] args = {memberDTO.getMember_id()};
+		try {
+			//아이디로 찾기 MEMBER_ID FIXME 관리자 권한 추가(char값 'T','F')
+			data = jdbcTemplate.queryForObject(SEARCH_ID, args, new MemberSelectRowMapperOne());
+		} catch (Exception e) {
+			System.out.println("com.coma.app.biz.member.selectOneSearchId SQL문 실패");
 		}
-		//아이디,비밀번호로 검색 MEMBER_ID, MEMBER_PASSWORD
-		else if(memberDTO.getMember_condition().equals("MEMBER_SEARCH_ID_PASSWORD")) {
-			sql=SEARCH_ID_PASSWORD;
-			args= new Object[]{memberDTO.getMember_id(), memberDTO.getMember_password()};
-		}
-		//특정 사용자가 속한 크루 찾기 MEMBER_ID
-		else if(memberDTO.getMember_condition().equals("MEMBER_SEARCH_MY_CREW")) {
-			sql=SEARCH_MY_CREW;
-			args= new Object[]{memberDTO.getMember_id()};
-		}
-		else {
-			System.out.println("com.coma.app.biz.member.selectOne SQL문 실패");
-			return null;
-		}
-
-		if(sql.equals(SEARCH_MY_CREW)) {
-			data=jdbcTemplate.queryForObject(sql, args, new MemberSearchCrewRowMapper());
-		}
-		else {
-			data=jdbcTemplate.queryForObject(sql, args, new MemberSelectOneRowMapper());
-		}
-		System.out.println("com.coma.app.biz.member.selectOne 성공");
+		System.out.println("com.coma.app.biz.member.selectOneSearchId 성공");
 		return data;
 	}
 
-	public List<MemberDTO> selectAll(MemberDTO memberDTO) {
-		System.out.println("com.coma.app.biz.member.selectAll 시작");
-		Object[] args={memberDTO.getMember_crew_num()};
+	public MemberDTO selectOneSearchIdPassword(MemberDTO memberDTO) {
+		System.out.println("com.coma.app.biz.member.selectOneSearchIdPassword 시작");
 
+		MemberDTO data = null;
+		Object[] args = {memberDTO.getMember_id(), memberDTO.getMember_password()};
+		try {
+			//아이디 비밀번호로 찾기 MEMBER_ID, MEMBER_PASSWORD
+			data = jdbcTemplate.queryForObject(SEARCH_ID_PASSWORD, args, new MemberSelectRowMapperOne());
+		} catch (Exception e) {
+			System.out.println("com.coma.app.biz.member.selectOneSearchIdPassword SQL문 실패");
+		}
+		System.out.println("com.coma.app.biz.member.selectOneSearchIdPassword 성공");
+		return data;
+	}
 
-		String sql="";
-		String sqlq; // 쿼리수행결과 구분용 데이터
+	public MemberDTO selectOneSearchMyCrew(MemberDTO memberDTO) {
+		System.out.println("com.coma.app.biz.member.selectOneSearchMyCrew 시작");
 
-		//랭킹높은순으로 정렬
-		if(memberDTO.getMember_condition().equals("MEMBER_SEARCH_RANK")) {
-			sql=SEARCH_RANK;
-			sqlq="all";
+		MemberDTO data = null;
+		Object[] args = {memberDTO.getMember_id()};
+		try {
+			//특정 사용자가 속한 크루 찾기 MEMBER_ID
+			data = jdbcTemplate.queryForObject(SEARCH_MY_CREW, args, new MemberSearchCrewRowMapperOne());
+		} catch (Exception e) {
+			System.out.println("com.coma.app.biz.member.selectOneSearchMyCrew SQL문 실패");
 		}
-		//크루 랭킹 높은순으로 전체 출력
-		else if(memberDTO.getMember_condition().equals("MEMBER_ALL_CREW_RANK")) {
-			sql=ALL_CREW_RANK;
-			sqlq="all";
-		}
-		//관리자가 아닌 신규회원 출력 (기간 7일)
-		else if(memberDTO.getMember_condition().equals("MEMBER_ALL_NEW")) {
-			sql=ALL_NEW;
-			sqlq="all";
-		}
-		//크루 랭킹 상위 10개
-		else if(memberDTO.getMember_condition().equals("MEMBER_ALL_TOP10_CREW_RANK")) {
-			sql=ALL_TOP10_CREW_RANK;
-			sqlq="all";
-		}
-		//개인 랭킹 상위  10개
-		else if(memberDTO.getMember_condition().equals("MEMBER_ALL_TOP10_RANK")) {
-			sql=ALL_TOP10_RANK;
-			sqlq="all";
-		}
-		//크루에 속한 회원목록 조회 MEMBER_CREW_NUM
-		else if(memberDTO.getMember_condition().equals("MEMBER_SEARCH_CREW")) {
-			sql=SEARCH_CREW;
-			sqlq="search";
-		}
-		//특정 크루에 속한 사용자 이름 전부 조회 CREW_NUM
-		else if(memberDTO.getMember_condition().equals("MEMBER_ALL_SEARCH_CREW_MEMBER_NAME")) {
-			sql=ALL_SEARCH_CREW_MEMBER_NAME;
-			sqlq="search";
-		}
-		else {
-			System.err.println("컨디션 입력 오류");
-			return null;
-		}
+		System.out.println("com.coma.app.biz.member.selectOneSearchMyCrew 성공");
+		return data;
+	}
 
-		List<MemberDTO> datas=null;
-		if(sqlq.equals("all")) {
-			System.out.println("com.coma.app.biz.member.selectAll 성공");
-			datas=jdbcTemplate.query(sql, new MemberRowMapper());
+	public List<MemberDTO> selectAllSearchRank(MemberDTO memberDTO) {
+		System.out.println("com.coma.app.biz.member.selectAllSearchRank 시작");
+
+		List<MemberDTO> datas = null;
+		try {
+			//랭킹높은순으로 정렬 관리자 FIXME 관리자 권한이 아닌사람들만
+			datas = jdbcTemplate.query(SEARCH_RANK, new MemberSelectRowMapperAll());
+		} catch (Exception e) {
+			System.out.println("com.coma.app.biz.member.selectAllSearchRank SQL문 실패");
 		}
-		else if(sqlq.equals("search")) {
-			System.out.println("com.coma.app.biz.member.selectAll 성공");
-			datas=jdbcTemplate.query(sql, args, new MemberRowMapper());
+		System.out.println("com.coma.app.biz.member.selectAllSearchRank 성공");
+		return datas;
+	}
+
+	public List<MemberDTO> selectAllCrewRank(MemberDTO memberDTO) {
+		System.out.println("com.coma.app.biz.member.selectAllCrewRank 시작");
+
+		List<MemberDTO> datas = null;
+		try {
+			//크루 랭킹 높은순으로 전체 출력
+			datas = jdbcTemplate.query(ALL_CREW_RANK, new MemberCrewRankRowMapperAll());
+		} catch (Exception e) {
+			System.out.println("com.coma.app.biz.member.selectAllCrewRank SQL문 실패");
 		}
-		else {
-			System.out.println("com.coma.app.biz.member.selectAll SQL문 실패");
-			return null;
+		System.out.println("com.coma.app.biz.member.selectAllCrewRank 성공");
+		return datas;
+	}
+
+	public List<MemberDTO> selectAllNew(MemberDTO memberDTO) {
+		System.out.println("com.coma.app.biz.member.selectAllNew 시작");
+
+		List<MemberDTO> datas = null;
+		try {
+			//관리자가 아닌 신규회원 출력 (기간 7일)
+			datas = jdbcTemplate.query(ALL_NEW, new MemberSelectRowMapperAll());
+		} catch (Exception e) {
+			System.out.println("com.coma.app.biz.member.selectAllNew SQL문 실패");
 		}
+		System.out.println("com.coma.app.biz.member.selectAllNew 성공");
+		return datas;
+	}
+
+	public List<MemberDTO> selectAllTop10CrewRank(MemberDTO memberDTO) {
+		System.out.println("com.coma.app.biz.member.selectAllTop10CrewRank 시작");
+
+		List<MemberDTO> datas = null;
+		try {
+			//크루 랭킹 상위 10개
+			datas = jdbcTemplate.query(ALL_TOP10_CREW_RANK, new MemberTop10CrewRankRowMapperAll());
+		} catch (Exception e) {
+			System.out.println("com.coma.app.biz.member.selectAllTop10CrewRank SQL문 실패");
+		}
+		System.out.println("com.coma.app.biz.member.selectAllTop10CrewRank 성공");
+		return datas;
+	}
+
+	public List<MemberDTO> selectAllTop10Rank(MemberDTO memberDTO) {
+		System.out.println("com.coma.app.biz.member.selectAllTop10Rank 시작");
+
+		List<MemberDTO> datas = null;
+		try {
+			//개인 랭킹 상위  10개
+			datas = jdbcTemplate.query(ALL_TOP10_RANK, new MemberTop10RankRowMapperAll());
+		} catch (Exception e) {
+			System.out.println("com.coma.app.biz.member.selectAllTop10Rank SQL문 실패");
+		}
+		System.out.println("com.coma.app.biz.member.selectAllTop10Rank 성공");
+		return datas;
+	}
+
+	public List<MemberDTO> selectAllSearchCrew(MemberDTO memberDTO) {
+		System.out.println("com.coma.app.biz.member.selectAllSearchCrew 시작");
+
+		List<MemberDTO> datas = null;
+		Object[] args = {memberDTO.getMember_crew_num()};
+		try {
+			//크루에 속한 회원목록 조회 MEMBER_CREW_NUM
+			datas = jdbcTemplate.query(SEARCH_CREW, args, new MemberSelectRowMapperAll());
+		} catch (Exception e) {
+			System.out.println("com.coma.app.biz.member.selectAllSearchCrew SQL문 실패");
+		}
+		System.out.println("com.coma.app.biz.member.selectAllSearchCrew 성공");
+		return datas;
+	}
+
+	public List<MemberDTO> selectAllSearchCrewMemberName(MemberDTO memberDTO) {
+		System.out.println("com.coma.app.biz.member.selectAllSearchCrewMemberName 시작");
+
+		List<MemberDTO> datas = null;
+		Object[] args = {memberDTO.getMember_crew_num()};
+		try {
+			//특정 크루에 속한 사용자 이름 전부 조회 CREW_NUM
+			datas = jdbcTemplate.query(ALL_SEARCH_CREW_MEMBER_NAME, args, new MemberSearchCrewMemberNameRowMapperAll());
+		} catch (Exception e) {
+			System.out.println("com.coma.app.biz.member.selectAllSearchCrewMemberName SQL문 실패");
+		}
+		System.out.println("com.coma.app.biz.member.selectAllSearchCrewMemberName 성공");
 		return datas;
 	}
 }
-//CREW_NUM,\r\n"
-//		+ "    C.CREW_NAME,\r\n"
-//		+ "    C.CREW_LEADER,\r\n"
-//		+ "    C.CREW_MAX_MEMBER_SIZE,\r\n"
-//		+ "    COUNT(M.MEMBER_ID) AS CREW_CURRENT_SIZE,\r\n"
-//		+ "    SUM(M.MEMBER_TOTAL_POINT) AS MEMBER_TOTAL_POINT
-class MemberSelectOneRowMapper implements RowMapper<MemberDTO> {
+
+class MemberSearchCrewMemberNameRowMapperAll implements RowMapper<MemberDTO> {
+
+	public MemberDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+		MemberDTO memberDTO=new MemberDTO();
+		System.out.print("DB에서 가져온 데이터 {");
+		memberDTO.setMember_name(rs.getString("MEMBER_NAME"));
+		System.err.print("member_name = ["+memberDTO.getMember_name()+"]");
+		System.out.println("}");
+		return memberDTO;
+	};
+}
+
+class MemberTop10RankRowMapperAll implements RowMapper<MemberDTO> {
+
+	public MemberDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+		MemberDTO memberDTO=new MemberDTO();
+		System.out.print("DB에서 가져온 데이터 {");
+		memberDTO.setMember_name(rs.getString("MEMBER_NAME"));
+		System.err.println("member_name = ["+memberDTO.getMember_name()+"]");
+		memberDTO.setMember_profile(rs.getString("MEMBER_PROFILE"));
+		System.err.print("member_profile = ["+memberDTO.getMember_profile()+"]");
+		System.out.println("}");
+		return memberDTO;
+	};
+}
+
+class MemberTop10CrewRankRowMapperAll implements RowMapper<MemberDTO> {
+
+	public MemberDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+		MemberDTO memberDTO=new MemberDTO();
+		System.out.print("DB에서 가져온 데이터 {");
+		memberDTO.setMember_crew_profile(rs.getString("CREW_PROFILE"));
+		System.err.println("member_crew_profile = ["+memberDTO.getMember_crew_profile()+"]");
+		memberDTO.setMember_crew_name(rs.getString("CREW_NAME"));
+		System.err.print("member_crew_name = ["+memberDTO.getMember_crew_name()+"]");
+		System.out.println("}");
+		return memberDTO;
+	};
+}
+
+class MemberCrewRankRowMapperAll implements RowMapper<MemberDTO> {
+
+	public MemberDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+		MemberDTO memberDTO=new MemberDTO();
+		System.out.print("DB에서 가져온 데이터 {");
+		memberDTO.setMember_crew_num(rs.getInt("CREW_NUM"));
+		System.err.println("member_crew_num = ["+memberDTO.getMember_crew_num()+"]");
+		memberDTO.setMember_crew_name(rs.getString("CREW_NAME"));
+		System.err.println("member_crew_name = ["+memberDTO.getMember_crew_name()+"]");
+		memberDTO.setMember_crew_leader(rs.getString("CREW_LEADER"));
+		System.err.println("member_crew_leader = ["+memberDTO.getMember_crew_leader()+"]");
+		memberDTO.setMember_crew_current_size(rs.getInt("CREW_CURRENT_SIZE"));
+		System.err.println("member_crew_current_size = ["+memberDTO.getMember_crew_current_size()+"]");
+		memberDTO.setMember_total_point(rs.getInt("MEMBER_TOTAL_POINT"));
+		System.err.print("member_total_point = ["+memberDTO.getMember_total_point()+"]");
+		System.out.println("}");
+		return memberDTO;
+	};
+}
+
+class MemberSelectRowMapperAll implements RowMapper<MemberDTO> {
 
 	public MemberDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
 		MemberDTO memberDTO=new MemberDTO();
@@ -361,7 +483,7 @@ class MemberSelectOneRowMapper implements RowMapper<MemberDTO> {
 	};
 }
 
-class MemberSelectOneRowMapper implements RowMapper<MemberDTO> {
+class MemberSelectRowMapperOne implements RowMapper<MemberDTO> {
 
 	public MemberDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
 		MemberDTO memberDTO=new MemberDTO();
@@ -395,14 +517,15 @@ class MemberSelectOneRowMapper implements RowMapper<MemberDTO> {
 	};
 }
 
-class MemberSearchCrewRowMapper implements RowMapper<MemberDTO> {
+class MemberSearchCrewRowMapperOne implements RowMapper<MemberDTO> {
 
 	public MemberDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
-		MemberDTO memberDTO=new MemberDTO();
+		MemberDTO memberDTO = new MemberDTO();
 		System.out.print("DB에서 가져온 데이터 {");
 		memberDTO.setMember_crew_num(rs.getInt("MEMBER_CREW_NUM"));
-		System.err.print("member_crew_num = ["+memberDTO.getMember_crew_num()+"]");
+		System.err.print("member_crew_num = [" + memberDTO.getMember_crew_num() + "]");
 		System.out.println("}");
 		return memberDTO;
 	};
 }
+

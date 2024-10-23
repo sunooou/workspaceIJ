@@ -456,7 +456,6 @@ public class Battle_recordDAO {
 				datas.add(data);
 				rsCnt++;
 			}
-
 		}catch(SQLException e) {
 			System.err.println("battle_record.Battle_recordDAO.selectAll SQL문 실패");
 			return datas;
@@ -465,6 +464,5 @@ public class Battle_recordDAO {
 		}
 		System.out.println("battle_record.Battle_recordDAO.selectAll 성공");
 		return datas;
-
 	}
 }
