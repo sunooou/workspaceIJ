@@ -4,7 +4,7 @@ package com.coma.app.biz.reservation;
 public class ReservationDTO {
 	private int reservation_num;          // 예약번호
 	private String reservation_date;        // 예약날짜 
-	//FIXME SQL DATE형식이라 String으로 변환하여 줄것
+	//FIXME SQL DATE형식이라 String으로 변환하여 줄것!
 	private int reservation_gym_num;      // 암벽장 FK
 	private String reservation_member_id; // 예약 사용자 FK
 	private int reservation_price; // 사용자 실제 결제 금액
