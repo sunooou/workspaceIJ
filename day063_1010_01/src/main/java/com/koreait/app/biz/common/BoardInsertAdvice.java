@@ -25,7 +25,7 @@ public class BoardInsertAdvice {
         if(args[0] instanceof BoardDTO) { // instanceof는 다운캐스팅시 꼭 따라다닌다
             BoardDTO boardDTO=(BoardDTO)args[0];
 
-            System.out.println(boardDTO.getWriter()+"님의 글이 DB에 정상적으로 등록되었습니다");
+            System.out.println(boardDTO.getBoard_writer()+"님의 글이 DB에 정상적으로 등록되었습니다");
         }
     }
 }

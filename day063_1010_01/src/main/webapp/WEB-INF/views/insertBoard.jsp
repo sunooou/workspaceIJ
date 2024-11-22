@@ -67,9 +67,9 @@
 
 <form action="insertBoard.do" method="POST">
     <label for="content">내용</label>
-    <input type="text" name="content" id="content" required> 
+    <input type="text" name="board_content" id="content" required>
     <label for="writer">작성자</label>
-    <input type="text" name="writer" id="writer" value="${userID}" readonly> 
+    <input type="text" name="board_writer" id="writer" value="${userID}" readonly>
     <input type="submit" value="글 작성">
 </form>
 

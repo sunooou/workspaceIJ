@@ -2,6 +2,8 @@ package com.coma.app.biz.member;
 
 import java.util.List;
 
+import com.coma.app.biz.board.BoardDAO;
+import com.coma.app.biz.board.BoardDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +12,9 @@ public class MemberServiceImpl implements MemberService {
 	
 	@Autowired
 	private MemberDAO memberDAO;
+
+	@Autowired
+	private BoardDAO boardDAO;
 
 
 	@Override

@@ -7,7 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.coma.app.biz.common.JDBCUtil;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class BoardDAO {
 	// 전체 글 출력(ALL) 페이지네이션 윈도우함수 ROW_NUMBER()사용 board_min_num, board_max_num
 	private final String ALL = "SELECT\r\n"

@@ -89,10 +89,10 @@
 <h3>글 목록</h3>
 <ul class="board-list" id="board-list">
 	<c:forEach var="data" items="${datas}">
-		<a href="board.do?bid=${data.bid}">
+		<a href="board.do?bid=${data.board_num}">
 			<li class="board-item">
-				<span class="board-title">${data.content}</span><br>
-				<span class="board-writer">작성자: ${data.writer}</span>
+				<span class="board-title">${data.board_content}</span><br>
+				<span class="board-writer">작성자: ${data.board_writer}</span>
 			</li>
 		</a>
 	</c:forEach>

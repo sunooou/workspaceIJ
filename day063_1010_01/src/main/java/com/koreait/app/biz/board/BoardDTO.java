@@ -3,37 +3,37 @@ package com.koreait.app.biz.board;
 import org.springframework.web.multipart.MultipartFile;
 
 public class BoardDTO {
-	private int bid;
-	private String content;
-	private String writer;
+	private int board_num;
+	private String board_content;
+	private String board_writer;
 	
 	private String condition; // 컨디션
 	private String keyword; // 검색어
 	private MultipartFile file; // 파일명
 	private String path; // 경로
 
-	public int getBid() {
-		return bid;
+	public int getBoard_num() {
+		return board_num;
 	}
 
-	public void setBid(int bid) {
-		this.bid = bid;
+	public void setBoard_num(int board_num) {
+		this.board_num = board_num;
 	}
 
-	public String getContent() {
-		return content;
+	public String getBoard_content() {
+		return board_content;
 	}
 
-	public void setContent(String content) {
-		this.content = content;
+	public void setBoard_content(String board_content) {
+		this.board_content = board_content;
 	}
 
-	public String getWriter() {
-		return writer;
+	public String getBoard_writer() {
+		return board_writer;
 	}
 
-	public void setWriter(String writer) {
-		this.writer = writer;
+	public void setBoard_writer(String board_writer) {
+		this.board_writer = board_writer;
 	}
 
 	public String getCondition() {
@@ -70,14 +70,8 @@ public class BoardDTO {
 
 	@Override
 	public String toString() {
-		return "BoardDTO{" +
-				"bid=" + bid +
-				", content='" + content + '\'' +
-				", writer='" + writer + '\'' +
-				", condition='" + condition + '\'' +
-				", keyword='" + keyword + '\'' +
-				", file=" + file +
-				", path='" + path + '\'' +
-				'}';
+		return "BoardDTO [board_num=" + board_num + ", board_content=" + board_content + ", board_writer="
+				+ board_writer + ", condition=" + condition + ", keyword=" + keyword + ", file=" + file + ", path="
+				+ path + "]";
 	}
 }

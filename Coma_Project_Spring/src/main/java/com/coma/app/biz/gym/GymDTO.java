@@ -7,7 +7,7 @@ public class GymDTO {
 	private String gym_description;     // 암벽장 설명
 	private String gym_location;        // 암벽장의 위치
 	private int gym_reservation_cnt; // 예약 가능 개수
-	private String gym_price;           // 이용 가격
+	private int gym_price;           // 이용 가격
 	
 	//DTO에만 존재하는 데이터
 	private String gym_condition;        // 개발자 데이터 검색
@@ -66,11 +66,11 @@ public class GymDTO {
 		this.gym_reservation_cnt = gym_reservation_cnt;
 	}
 
-	public String getGym_price() {
+	public int getGym_price() {
 		return gym_price;
 	}
 
-	public void setGym_price(String gym_price) {
+	public void setGym_price(int gym_price) {
 		this.gym_price = gym_price;
 	}
 
